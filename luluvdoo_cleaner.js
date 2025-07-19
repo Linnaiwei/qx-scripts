@@ -5,10 +5,11 @@ if ($response && $response.body) {
         let body = $response.body;
 
         // 将 patterns 定义为对象数组，以便跟踪匹配状态
+        // 优化了正则表达式，使其匹配更精确，避免过于贪婪导致误删。
         const patterns = [
-            { name: "恶意变量 'K' 脚本", regex: /<script[^>]*>[\s\S]*?ChmaorrCfozdgenziMrattShzzy[\s\S]*?<\/script>/gi, found: false },
+            { name: "恶意变量 'K' 脚本", regex: /<script data-cfasync="false" type="text/javascript">\s*\(\s*\(\)\s*=>\s*{[\s\S]*?ChmaorrCfozdgenziMrattShzzy[\s\S]*?}\)\(\);?\s*<\/script>/gi, found: false },
             { name: "lulu-row1 广告脚本", regex: /<script[^>]*?src="[^"]*?storage\.lulu-row1\.com[^"]*?"[^>]*?>\s*<\/script>/gi, found: false },
-            { name: "Adblock 提示脚本", regex: /<script[^>]*>[\s\S]*?function showADBOverlay\(\)[\s\S]*?<\/script>/gi, found: false }
+            { name: "Adblock 提示脚本", regex: /<script[^>]*>\s*function showADBOverlay\(\)\s*{[\s\S]*?}\s*<\/script>/gi, found: false }
         ];
 
         let totalMatches = 0;
