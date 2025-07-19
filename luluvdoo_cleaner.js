@@ -1,33 +1,36 @@
-if ($response.bodyBytes) {
+const scriptName = "Luluvdoo Cleaner";
+
+// 直接检查 $response.body 是否存在
+if ($response.body) {
     try {
-        // 使用 TextDecoder 将原始二进制数据 (bodyBytes) 解码为 UTF-8 字符串
-        const decoder = new TextDecoder('utf-8');
-        let bodyString = decoder.decode($response.bodyBytes);
+        let body = $response.body;
 
-        // 定义要查找和替换的内容
-        const originalTitleRegex = /<title>[\s\S]*?<\/title>/i;
-        const newTitle = '<title>REWRITE SUCCESS</title>';
+        // 定义要移除脚本的正则表达式
+        const patterns = [
+            // 规则1: 匹配包含恶意变量 'K' 的内联脚本
+            /<script[^>]*?>\s*\(\s*\(\)\s*=>\s*{[\s\S]*?ChmaorrCfozdgenziMrattShzzy[\s\S]*?}\)\(\);?\s*<\/script>/gi,
 
-        // 检查原始标题是否存在
-        if (originalTitleRegex.test(bodyString)) {
-            // 替换标题
-            bodyString = bodyString.replace(originalTitleRegex, newTitle);
+            // 规则2: 匹配来自 storage.lulu-row1.com 的广告脚本
+            /<script[^>]*?src="[^"]*?storage\.lulu-row1\.com[^"]*?"[^>]*?>\s*<\/script>/gi,
 
-            // 使用 TextEncoder 将修改后的字符串重新编码为二进制数据
-            const encoder = new TextEncoder();
-            const newBodyBytes = encoder.encode(bodyString);
+            // 规则3: 匹配定义了 adblock 提示函数的内联脚本
+            /<script[^>]*>\s*function showADBOverlay\(\)\s*{[\s\S]*?}\s*<\/script>/gi
+        ];
 
-            // 返回修改后的二进制数据
-            $done({ bodyBytes: newBodyBytes });
-        } else {
-            // 如果连 <title> 标签都找不到，说明响应体有问题
-            $notify("Luluvdoo 终极调试 - 警告", "在响应体中未找到 <title> 标签。", "响应可能不是标准的 HTML 页面。");
-            $done({});
-        }
+        // 遍历所有规则，替换匹配到的内容为空字符串
+        patterns.forEach(pattern => {
+            body = body.replace(pattern, "");
+        });
+
+        // 返回修改后的字符串响应体
+        $done({ body });
+
     } catch (e) {
-        $notify("Luluvdoo 终极调试 - 异常", "脚本在处理响应时发生错误。", e.message);
+        // 如果发生异常，在 QX 日志中打印错误，并返回原始响应体
+        console.log(`[${scriptName}] Error: ${e.message}`);
         $done({});
     }
 } else {
+    // 如果没有响应体，则不做任何操作
     $done({});
 }
