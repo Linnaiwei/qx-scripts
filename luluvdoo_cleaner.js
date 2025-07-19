@@ -1,6 +1,6 @@
 const scriptName = "Luluvdoo Cleaner";
 
-// 直接检查 $response.body 是否存在
+// 因为请求头已被修改，现在 $response.body 就是未压缩的纯文本
 if ($response.body) {
     try {
         let body = $response.body;
