@@ -1,13 +1,3 @@
-/*
- Quantumult X Rewrite Script for luluvdoo.com
- Version: 1.5
- Author: Gemini
-
- 功能:
- 1. 移除包含恶意变量 'K' 的内联脚本。
- 2. 移除来自 'storage.lulu-row1.com' 域名的广告脚本。
- 3. 移除定义 'showADBOverlay' 函数的广告拦截提示脚本。
-*/
 
 // 检查 $response 是否存在且有 body
 if ($response && $response.body) {
